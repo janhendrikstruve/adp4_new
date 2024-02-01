@@ -1,0 +1,86 @@
+model List
+
+abstract class List
+  operations
+    // Fügt ein Element an das Ende dieser Liste an
+    append(element:OclAny)
+    
+    // Entfernt das Element an der Position index
+    remove(index:Integer)
+    
+    // Fügt das Element element an der Position index ein
+    insertAt(element:OclAny, index:Integer)
+    
+    // Liefert die Größe der Liste (Anzahl der enthaltenen Elemente) zurück
+    size():Integer = 
+      null
+    
+    get(index:Integer):OclAny = null
+
+    // Ermittelt die Position des Elements element
+    indexOf(element:OclAny) : Integer =
+      Sequence{1..self.size()}->iterate(index; foundIndex:Integer = null |
+        if self.get(index) = element then
+           index
+        else
+           foundIndex
+        endif
+      )
+end
+
+constraints
+
+context List::append(element:OclAny)
+  post itemAdded:
+    self.size@pre() + 1 = self.size()
+  post itemIsLast:
+    self.get(self.size()) = element
+
+context List::insertAt(element:OclAny, index: Integer)
+  post itemAdded:
+    true
+  post addedAtCorrectPosition:
+    true
+
+
+class ArrayList < List
+   attributes
+     elements:Sequence(OclAny)
+
+    operations
+      size():Integer =
+        self.elements->size()
+
+      get(index:Integer):OclAny =
+        self.elements->at(index)
+end
+
+class LinkedList < List
+  operations
+    get(index:Integer):OclAny = 
+      Sequence{1..index - 1}->iterate(i:Integer; elem:ListItem = self.head |
+        elem.next
+      ).element
+	size():Integer = 
+		Set{self.head}->closure(e | e.next)->excluding(null)->size()
+	  
+end
+
+class ListItem
+  attributes
+    element:OclAny
+end
+
+association A_LinkBetweenItems between
+  ListItem[0..1] role previous
+  ListItem[0..1] role next
+end
+
+composition A_ListHead between
+  LinkedList[0..1] role list
+  ListItem[0..1] role head
+end
+
+constraints
+  context ListItem inv mustBeTrue:
+    self.list.isDefined() or self.previous.isDefined()
