@@ -96,22 +96,7 @@ public class Huffman {
 		root = heap.remove(); // Der verbleibende Baum ist der Huffman-Baum
 	}
 
-	/*public void calculateCharacterFrequencies(String path) {
-            try (InputStream inputStream = new FileInputStream(path)) {
-                // Erstellen eines BitInput-Objekts zum bitweisen Lesen
-                BitInput inputFile = BitInputFactory.from(inputStream);
-
-                // Endlosschleife zum Lesen der Bits
-                while (true) {
-                    } catch (EOFException e) {
-                        // Beenden der Schleife, wenn das Ende der Datei erreicht ist
-                        break;
-                    }
-                }
-            }
-        }*/
-
-	// Generiert die Huffman-Codes für jedes Zeichen
+	// Generiert die Huffman-Codes für jedes Zeichen <4>
 	public void calculateCodeFromHuffmanTree() {
 		traverseHuffmanTree(root, ""); // Start der Tiefensuche vom Wurzelknoten
 	}
@@ -119,9 +104,7 @@ public class Huffman {
 	// Durchläuft den Huffman-Baum und weist jedem Zeichen einen Code zu
 	private void traverseHuffmanTree(BTree tree, String path) {
 		if (tree.isLeaf()) { // Wenn ein Blatt erreicht wird
-			if(tree.getData().getCharacter() != -1) { // Wenn das Blatt kein Pseudozeichen ist
-				codeTable[tree.getData().getCharacter()] = path; // Zuweisung des Pfades als Code
-			}
+			codeTable[tree.getData().getCharacter()] = path; // Zuweisung des Pfades als Code
 			return;
 		}
 
@@ -129,6 +112,7 @@ public class Huffman {
 		traverseHuffmanTree(tree.getLeftNode(), path + "0"); // Hinzufügen einer '0' für den linken Pfad
 		traverseHuffmanTree(tree.getRightNode(), path + "1"); // Hinzufügen einer '1' für den rechten Pfad
 	}
+
 
 	// Ausgabe der Zeichenhäufigkeiten - Hilfsmethode zur Überprüfung
 	public void writeCharacterFrequencies() {
@@ -181,4 +165,19 @@ public class Huffman {
 		// Methode zur Rückgabe der Gesamtanzahl der Zeichen (nicht implementiert)
 		return 0;
 	}
+
+	/*public void calculateCharacterFrequencies(String path) {
+            try (InputStream inputStream = new FileInputStream(path)) {
+                // Erstellen eines BitInput-Objekts zum bitweisen Lesen
+                BitInput inputFile = BitInputFactory.from(inputStream);
+
+                // Endlosschleife zum Lesen der Bits
+                while (true) {
+                    } catch (EOFException e) {
+                        // Beenden der Schleife, wenn das Ende der Datei erreicht ist
+                        break;
+                    }
+                }
+            }
+        }*/
 }
